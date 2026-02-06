@@ -1,0 +1,114 @@
+name: utilsplugin
+version: '1.0.0'
+main: io.github.nek0cha.utilsplugin.Utilsplugin
+api-version: '1.21'
+load: STARTUP
+authors: [ Nyaffle ]
+description: サーバー管理に便利な機能を提供するプラグイン
+
+commands:
+  fly:
+    description: プレイヤーの飛行モードを切り替えます
+    usage: /fly [プレイヤー名]
+    permission: utilsplugin.fly
+
+  heal:
+    description: プレイヤーを回復します
+    usage: /heal [プレイヤー名]
+    permission: utilsplugin.heal
+
+  msg:
+    description: プレイヤーにプライベートメッセージを送信
+    usage: /<command> <プレイヤー> <メッセージ>
+    aliases: [tell, w]
+
+  reply:
+    description: 最後にメッセージを送った相手に返信
+    usage: /<command> <メッセージ>
+    aliases: [r]
+
+  broadcast:
+    description: サーバー全体にメッセージを放送
+    usage: /<command> <メッセージ>
+    permission: utilsplugin.broadcast
+    aliases: [bc, announce]
+
+  socialspy:
+    description: プライベートメッセージを監視
+    usage: /<command>
+    permission: utilsplugin.socialspy
+    aliases: [spy]
+
+  mutechat:
+    description: チャットをミュート/アンミュート
+    usage: /<command>
+    permission: utilsplugin.mutechat
+    aliases: [chatmute]
+
+  afk:
+    description: AFK状態を切り替え
+    usage: /<command>
+    permission: utilsplugin.afk
+
+
+  utilsplugin:
+    description: プラグインの設定を再読み込み
+    usage: /<command> reload
+    permission: utilsplugin.reload
+    aliases: [up, utils]
+
+permissions:
+  utilsplugin.*:
+    description: すべての権限
+    children:
+      utilsplugin.chat.color: true
+      utilsplugin.broadcast: true
+      utilsplugin.socialspy: true
+      utilsplugin.mutechat: true
+      utilsplugin.mutechat.bypass: true
+      utilsplugin.afk: true
+      utilsplugin.reload: true
+
+  utilsplugin.chat.color:
+    description: チャットでカラーコードを使用可能
+    default: op
+
+  utilsplugin.broadcast:
+    description: ブロードキャストコマンドを実行
+    default: op
+
+  utilsplugin.socialspy:
+    description: ソーシャルスパイを使用
+    default: op
+
+  utilsplugin.mutechat:
+    description: チャットミュートコマンドを実行
+    default: op
+
+  utilsplugin.mutechat.bypass:
+    description: チャットミュート中も発言可能
+    default: op
+
+  utilsplugin.afk:
+    description: AFKコマンドを使用
+    default: true
+
+  utilsplugin.fly:
+    description: 飛行モードを使用
+    default: op
+
+  utilsplugin.fly.others:
+    description: 他プレイヤーの飛行モードを変更
+    default: op
+
+  utilsplugin.heal:
+    description: 回復コマンドを使用
+    default: op
+
+  utilsplugin.heal.others:
+    description: 他プレイヤーを回復
+    default: op
+
+  utilsplugin.reload:
+    description: プラグインの設定を再読み込み
+    default: op

@@ -1,0 +1,188 @@
+# Utilsplugin Configuration File
+
+# プレースホルダー一覧
+# {time} - 現在の時刻 (HH:mm:ss)
+# {date} - 現在の日付 (yyyy/MM/dd)
+# {hour} - 現在の時間 (HH)
+# {minute} - 現在の分 (mm)
+# {second} - 現在の秒 (ss)
+# {year} - 現在の年 (yyyy)
+# {month} - 現在の月 (MM)
+# {day} - 現在の日 (dd)
+
+# プレイヤー関連
+# {player} - プレイヤー名
+# {player_x} - プレイヤーのX座標
+# {player_y} - プレイヤーのY座標
+# {player_z} - プレイヤーのZ座標
+# {player_world} - プレイヤーのワールド名
+# {player_ping} - プレイヤーのPing
+
+# サーバー関連
+# {online} - オンラインプレイヤー数
+# {max} - 最大プレイヤー数
+# {tps} - サーバーのTPS
+# {mspt} - サーバーのMSPT
+# {used_memory} - 使用中メモリ(MB)
+# {max_memory} - 最大メモリ(MB)
+
+
+# チャットフォーマット設定
+chat:
+  enabled: true
+  format: "&7[&3{player_world}&7] &f{player}&7: &f{message}"
+  # 使用可能なプレースホルダー:
+  # {player} - プレイヤー名
+  # {player_world} - ワールド名
+  # {message} - メッセージ内容
+
+  # カラーコード機能
+  color-codes:
+    enabled: true
+    # プレイヤーがメッセージでカラーコードを使用できるか
+    allow-players: true
+    # 特定の権限を持つプレイヤーのみカラーコード使用可
+    # 権限: utilsplugin.chat.color
+    require-permission: false
+
+# プライベートメッセージ設定
+private-message:
+  enabled: true
+  # 送信者に表示されるフォーマット
+  format-sender: "&7[&fあなた &7-> &f{receiver}&7] &f&f{message}"
+  # 受信者に表示されるフォーマット
+  format-receiver: "&7[&f{sender} &7-> &fあなた&7] &f{message}"
+  # カラーコード使用可否
+  allow-color-codes: true
+  # メッセージ送信音
+  sound:
+    enabled: true
+    type: "ENTITY_EXPERIENCE_ORB_PICKUP"
+    volume: 1.0
+    pitch: 1.0
+
+# ブロードキャストコマンド設定
+broadcast:
+  enabled: true
+  format: "&6[お知らせ] &e{message}"
+  # 権限: utilsplugin.broadcast
+
+# チャットクリア設定
+clearchat:
+  enabled: true
+  lines: 100
+  # クリア時のメッセージ
+  message: "&aチャットが {player} によってクリアされました"
+  # 権限: utilsplugin.clearchat
+  # バイパス権限（チャットクリアされない）: utilsplugin.clearchat.bypass
+
+# ソーシャルスパイ設定
+socialspy:
+  enabled: true
+  format: "&d[SPY] &3{sender} &7-> &3{receiver}&7: &f{message}"
+  # 権限: utilsplugin.socialspy
+
+# チャットミュート設定
+mutechat:
+  enabled: true
+  muted-message: "&cチャットは現在ミュートされています"
+  unmute-message: "&aチャットが {player} によって解除されました"
+  mute-message: "&cチャットが {player} によってミュートされました"
+  # 権限: utilsplugin.mutechat
+  # バイパス権限（ミュート中も発言可能）: utilsplugin.mutechat.bypass
+
+# その他の便利機能
+features:
+  # サーバー参加/退出メッセージのカスタマイズ
+  join-quit-messages:
+    enabled: true
+    join-format: "&a+ &7{player} がサーバーに参加しました"
+    quit-format: "&c- &7{player} がサーバーから退出しました"
+
+  # 死亡メッセージのカスタマイズ
+  death-messages:
+    enabled: true
+    custom: false
+    format: "&c☠ &7{message}"
+
+  # AFKシステム
+  afk:
+    enabled: true
+    timeout: 300 # 5分間操作がないとAFK
+    message-afk: "&d{player} は現在AFK（離席中）です"
+    message-return: "&d{player} がAFK状態から戻りました"
+    # 権限: utilsplugin.afk
+
+# 定期メッセージ
+auto-broadcast:
+  enabled: true
+  # メッセージの間隔（分）
+  interval: 5
+  # プレフィックス
+  prefix: "&6[定期お知らせ] &e"
+  # メッセージリスト
+  messages:
+    - "サーバールールを守って楽しくプレイしましょう！"
+    - "困ったことがあれば /help でヘルプを確認できます"
+    - "定期的にバックアップを取ることをおすすめします"
+    - "Discordサーバーもチェックしてください！"
+
+# タブリスト設定
+tablist:
+  enabled: true
+  # 更新間隔（ティック、20tick = 1秒）
+  update-interval: 10
+
+  # ヘッダー（最大5行）
+  header:
+    - "&6&l━━━━━━━━━━━━━━━━━━"
+    - "&e&l  サーバー名  "
+    - "&7オンライン: &a{online}&7/&a{max}"
+    - "&7TPS: &a{tps} &7| MSPT: &a{mspt}ms"
+    - ""
+
+  # フッター（最大5行）
+  footer:
+    - ""
+    - "&7メモリ: &a{used_memory}&7/&a{max_memory}MB"
+    - "&7あなたのPing: &a{player_ping}ms"
+    - "&7現在時刻: &a{date} {time}"
+    - "&6&l━━━━━━━━━━━━━━━━━━"
+
+# スコアボード設定
+scoreboard:
+  enabled: true
+  # タイトル
+  title: "&6&lサーバー情報"
+  # 更新間隔（ティック、20tick = 1秒）
+  update-interval: 10
+
+  # 表示内容（最大15行）
+  # 空行を入れたい場合は空の文字列 "" を使用
+  lines:
+    - "&7------------------"
+    - "&eプレイヤー情報"
+    - "&7座標: &f{player_x}, {player_y}, {player_z}"
+    - "&7ワールド: &f{player_world}"
+    - "&7Ping: &f{player_ping}ms"
+    - ""
+    - "&eサーバー情報"
+    - "&7TPS: &a{tps}"
+    - "&7MSPT: &a{mspt}ms"
+    - "&7メモリ: &a{used_memory}&7/&a{max_memory}MB"
+    - ""
+    - "&e日時"
+    - "&7{date}"
+    - "&7{time}"
+    - "&7------------------"
+
+# メッセージ設定
+messages:
+  no-permission: "&cこのコマンドを実行する権限がありません"
+  player-not-found: "&cプレイヤー {player} が見つかりません"
+  reload-success: "&a設定ファイルを再読み込みしました"
+  must-be-player: "&cこのコマンドはプレイヤーのみ実行できます"
+
+# タイムゾーン設定(デフォルト: サーバーのタイムゾーン) 
+# 例: "Asia/Tokyo", "America/New_York", "Europe/London"
+timezone: "UTC"

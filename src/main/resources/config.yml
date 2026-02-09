@@ -186,3 +186,87 @@ messages:
 # タイムゾーン設定(デフォルト: サーバーのタイムゾーン) 
 # 例: "Asia/Tokyo", "America/New_York", "Europe/London"
 timezone: "UTC"
+
+# ナビゲーションメニュー設定
+navigation:
+  # メニューを開くためのコンパスアイテムの名前
+  compass:
+    name: "&6&lメニュー"
+
+  # メニューの設定
+  menu:
+    title: "&6&lメニュー"
+    size: 27  # 9の倍数（9, 18, 27, 36, 45, 54）
+
+  # ワールド移動設定
+  worlds:
+    # ワールド1の設定例
+    world1:
+      slot: 10  # メニュー内のスロット位置（0-26）
+      material: GRASS_BLOCK  # アイテムのマテリアル
+      name: "&a&lメインワールド"
+      lore:
+        - "&7メインのサバイバルワールド"
+        - "&eクリックで移動"
+      world: "world"  # 移動先のワールド名
+
+    # ネザーの設定例
+    nether:
+      slot: 11
+      material: NETHERRACK
+      name: "&c&lネザー"
+      lore:
+        - "&7ネザーディメンション"
+        - "&eクリックで移動"
+      world: "world_nether"
+
+    # エンドの設定例
+    end:
+      slot: 12
+      material: END_STONE
+      name: "&d&lジ・エンド"
+      lore:
+        - "&7エンドディメンション"
+        - "&eクリックで移動"
+      world: "world_the_end"
+
+  # サーバー間移動設定（BungeeCordまたはVelocity使用時）
+  servers:
+    # ロビーサーバーの設定例
+    lobby:
+      slot: 13
+      material: BEACON
+      name: "&b&lロビーサーバー"
+      lore:
+        - "&7ロビーに戻る"
+        - "&eクリックで移動"
+      server: "lobby"  # 移動先のサーバー名
+      address: "localhost"
+      port: 25565
+      # アドレスとポートを指定する場合（オプション）
+      # address: "127.0.0.1"
+      # port: 25565
+
+    # サバイバルサーバーの設定例
+    survival:
+      slot: 14
+      material: DIAMOND_SWORD
+      name: "&e&lサバイバルサーバー"
+      lore:
+        - "&7サバイバルモード"
+        - "&eクリックで移動"
+      server: "survival"
+      # address: "survival.example.com"
+      # port: 25566
+
+    # クリエイティブサーバーの設定例
+    creative:
+      slot: 15
+      material: GOLDEN_APPLE
+      name: "&d&lクリエイティブサーバー"
+      lore:
+        - "&7クリエイティブモード"
+        - "&eクリックで移動"
+      server: "creative"
+      # address: "creative.example.com"
+      # port: 25567

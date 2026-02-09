@@ -57,6 +57,17 @@ commands:
     permission: utilsplugin.reload
     aliases: [up, utils]
 
+  urlclick:
+    description: チャットメッセージ内のURLをクリック可能にします
+    usage: 自動的に有効化されます
+    permission: utilsplugin.urlclick
+
+  menu:
+    description: メニューアイテムを取得またはメニューを開きます
+    usage: /menu [get]
+    permission: utilsplugin.menu
+    aliases: []
+
 permissions:
   utilsplugin.*:
     description: すべての権限
@@ -112,3 +123,11 @@ permissions:
   utilsplugin.reload:
     description: プラグインの設定を再読み込み
     default: op
+
+  utilsplugin.urlclick:
+    description: チャット内のURLをクリック可能にする権限
+    default: true
+
+  utilsplugin.menu:
+    description: メニューアイテムを取得またはメニューを開く権限
+    default: true

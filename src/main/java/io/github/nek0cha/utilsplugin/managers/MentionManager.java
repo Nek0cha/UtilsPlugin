@@ -63,8 +63,13 @@ public class MentionManager {
             String soundType = plugin.getConfig().getString("mention.sound.type", "ENTITY_EXPERIENCE_ORB_PICKUP");
             float volume = (float) plugin.getConfig().getDouble("mention.sound.volume", 1.0);
             float pitch = (float) plugin.getConfig().getDouble("mention.sound.pitch", 2.0);
-            Sound sound = Sound.valueOf(soundType.toUpperCase());
-
+            Sound sound;
+            try {
+                sound = Sound.valueOf(soundType.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                plugin.getLogger().warning("無効なサウンド名: " + soundType);
+                return;
+            }
             mentioned.playSound(mentioned.getLocation(), sound, volume, pitch);
         } catch (IllegalArgumentException e) {
             plugin.getLogger().warning("無効なサウンド名: " + e.getMessage());

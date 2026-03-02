@@ -46,6 +46,10 @@ public class AFKManager {
     }
 
     public void updateActivity(Player player) {
+        if (!plugin.getConfig().getBoolean("features.afk.enabled", true)) {
+            return;
+        }
+
         UUID uuid = player.getUniqueId();
 
         if (afkPlayers.contains(uuid)) {
@@ -56,6 +60,9 @@ public class AFKManager {
     }
 
     public void setAFK(Player player, boolean afk) {
+        if (!plugin.getConfig().getBoolean("features.afk.enabled", true)) {
+            return;
+        }
         UUID uuid = player.getUniqueId();
 
         if (afk && !afkPlayers.contains(uuid)) {

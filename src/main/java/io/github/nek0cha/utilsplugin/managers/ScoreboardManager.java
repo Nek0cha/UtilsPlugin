@@ -16,12 +16,6 @@ public class ScoreboardManager {
     private final Utilsplugin plugin;
     private final Map<UUID, Scoreboard> playerScoreboards = new HashMap<>();
 
-    // 重複行の一意化に使う、見た目に影響しない色コード
-    private static final String[] UNIQUE_SUFFIXES = {
-            "§0", "§1", "§2", "§3", "§4", "§5", "§6", "§7",
-            "§8", "§9", "§a", "§b", "§c", "§d", "§e", "§f"
-    };
-
     public ScoreboardManager(Utilsplugin plugin) {
         this.plugin = plugin;
     }
@@ -57,7 +51,6 @@ public class ScoreboardManager {
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 
         String title = plugin.getConfig().getString("scoreboard.title", "&6&lサーバー情報");
-        title = plugin.getChatManager().translateColorCodes(title);
 
         Objective objective = scoreboard.registerNewObjective("sidebar", Criteria.DUMMY,
             plugin.getChatManager().translateToComponent(title));
@@ -83,6 +76,11 @@ public class ScoreboardManager {
             return;
         }
 
+        // タイトルを毎回更新（設定変更後も反映されるように）
+        String title = plugin.getConfig().getString("scoreboard.title", "&6&lサーバー情報");
+        title = plugin.getPlaceholderManager().replacePlaceholders(title, player);
+        objective.displayName(plugin.getChatManager().translateToComponent(title));
+
         // 既存のエントリをすべてクリア
         for (String entry : scoreboard.getEntries()) {
             scoreboard.resetScores(entry);
@@ -91,43 +89,25 @@ public class ScoreboardManager {
         List<String> lines = plugin.getConfig().getStringList("scoreboard.lines");
         int maxLines = Math.min(lines.size(), 15);
 
-        // すでに追加した“表示上の”行の出現回数を数える
-        java.util.Map<String, Integer> seen = new java.util.HashMap<>();
-
         for (int i = 0; i < maxLines; i++) {
             String line = lines.get(i);
             line = plugin.getPlaceholderManager().replacePlaceholders(line, player);
-            line = plugin.getChatManager().translateColorCodes(line);
 
+            // Adventure ComponentとしてHEXカラーコードを含む行を変換
+            net.kyori.adventure.text.Component lineComponent;
             if (line.trim().isEmpty()) {
-                // 空行は素直にスペースで一意化（見た目は空行のまま）
-                line = " ".repeat(i + 1);
+                // 空行は一意なスペース
+                lineComponent = net.kyori.adventure.text.Component.text(" ".repeat(i + 1));
+            } else {
+                lineComponent = plugin.getChatManager().translateToComponent(line);
             }
 
-            // 行の長さ制限（Minecraftの制限: 40文字）
-            if (line.length() > 40) {
-                line = line.substring(0, 40);
-            }
+            // エントリ名は行インデックスベースの一意な識別子
+            // 表示はcustomName(Component)でHEXカラーを含むComponentを使用
+            String entryKey = "line_" + i;
 
-            // 重複判定は “見た目の文字列” を基準にする（色コードも含めて同一なら重複扱い）
-            int count = seen.getOrDefault(line, 0);
-            seen.put(line, count + 1);
-
-            String uniqueLine = line;
-            if (count > 0) {
-                // 末尾に不可視サフィックスを追加して“内部キー”だけ一意化。
-                // ただし末尾で色が変わるのを防ぐため、元の最後の色を再付与する。
-                String lastColors = org.bukkit.ChatColor.getLastColors(uniqueLine);
-                String suffix = UNIQUE_SUFFIXES[(count - 1) % UNIQUE_SUFFIXES.length];
-                uniqueLine = uniqueLine + suffix + lastColors;
-
-                // 40文字制限に収まるよう最終調整
-                if (uniqueLine.length() > 40) {
-                    uniqueLine = uniqueLine.substring(0, 40);
-                }
-            }
-
-            Score scoreEntry = objective.getScore(uniqueLine);
+            Score scoreEntry = objective.getScore(entryKey);
+            scoreEntry.customName(lineComponent);
             scoreEntry.setScore(maxLines - i);
         }
     }

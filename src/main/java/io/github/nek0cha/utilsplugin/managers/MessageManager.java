@@ -52,7 +52,13 @@ public class MessageManager {
                 float volume = (float) plugin.getConfig().getDouble("private-message.sound.volume", 1.0);
                 float pitch = (float) plugin.getConfig().getDouble("private-message.sound.pitch", 1.0);
 
-                Sound sound = Sound.valueOf(soundType.toUpperCase());
+                Sound sound;
+                try {
+                    sound = Sound.valueOf(soundType.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    plugin.getLogger().warning("無効なサウンド名: " + soundType);
+                    return;
+                }
                 receiver.playSound(receiver.getLocation(), sound, volume, pitch);
             } catch (IllegalArgumentException e) {
                 plugin.getLogger().warning("無効なサウンド名: " + e.getMessage());

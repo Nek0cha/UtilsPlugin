@@ -17,6 +17,8 @@ public final class Utilsplugin extends JavaPlugin {
     private AutoBroadcastManager autoBroadcastManager;
     private TabListManager tabListManager;
     private ScoreboardManager scoreboardManager;
+    private URLClickManager urlClickManager;
+    private NavigationManager navigationManager;
 
     @Override
     public void onEnable() {
@@ -35,6 +37,8 @@ public final class Utilsplugin extends JavaPlugin {
         autoBroadcastManager = new AutoBroadcastManager(this);
         tabListManager = new TabListManager(this);
         scoreboardManager = new ScoreboardManager(this);
+        urlClickManager = new URLClickManager(this);
+        navigationManager = new NavigationManager(this);
 
         // マネージャーの開始
         autoBroadcastManager.start();
@@ -58,12 +62,14 @@ public final class Utilsplugin extends JavaPlugin {
     private void registerListeners() {
         getServer().getPluginManager().registerEvents(new ChatListener(this), this);
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+        getServer().getPluginManager().registerEvents(new NavigationListener(this), this);
     }
 
     private void registerCommands() {
         // プライベートメッセージコマンド
         if (getConfig().getBoolean("private-message.enabled", true)) {
             PrivateMessageCommand pmCmd = new PrivateMessageCommand(this);
+            // 修正: getCommand() の結果が null の場合に備えて null チェックを追加
             if (getCommand("msg") != null) {
                 getCommand("msg").setExecutor(pmCmd);
             }
@@ -83,6 +89,7 @@ public final class Utilsplugin extends JavaPlugin {
 
         // ブロードキャストコマンド
         if (getConfig().getBoolean("broadcast.enabled", true)) {
+            // 修正: getCommand() の結果が null の場合に備えて null チェックを追加
             if (getCommand("broadcast") != null) {
                 getCommand("broadcast").setExecutor(new BroadcastCommand(this));
             }
@@ -90,6 +97,7 @@ public final class Utilsplugin extends JavaPlugin {
 
         // ソーシャルスパイコマンド
         if (getConfig().getBoolean("socialspy.enabled", true)) {
+            // 修正: getCommand() の結果が null の場合に備えて null チェックを追加
             if (getCommand("socialspy") != null) {
                 getCommand("socialspy").setExecutor(new SocialSpyCommand(this));
             }
@@ -97,6 +105,7 @@ public final class Utilsplugin extends JavaPlugin {
 
         // チャットミュートコマンド
         if (getConfig().getBoolean("mutechat.enabled", true)) {
+            // 修正: getCommand() の結果が null の場合に備えて null チェックを追加
             if (getCommand("mutechat") != null) {
                 getCommand("mutechat").setExecutor(new MuteChatCommand(this));
             }
@@ -104,6 +113,7 @@ public final class Utilsplugin extends JavaPlugin {
 
         // AFKコマンド
         if (getConfig().getBoolean("features.afk.enabled", true)) {
+            // 修正: getCommand() の結果が null の場合に備えて null チェックを追加
             if (getCommand("afk") != null) {
                 getCommand("afk").setExecutor(new AFKCommand(this));
             }
@@ -122,6 +132,11 @@ public final class Utilsplugin extends JavaPlugin {
         // リロードコマンド
         if (getCommand("utilsplugin") != null) {
             getCommand("utilsplugin").setExecutor(new ReloadCommand(this));
+        }
+
+        // メニューコマンド
+        if (getCommand("menu") != null) {
+            getCommand("menu").setExecutor(new MenuCommand(this));
         }
     }
 
@@ -163,5 +178,13 @@ public final class Utilsplugin extends JavaPlugin {
 
     public ScoreboardManager getScoreboardManager() {
         return scoreboardManager;
+    }
+
+    public URLClickManager getURLClickManager() {
+        return urlClickManager;
+    }
+
+    public NavigationManager getNavigationManager() {
+        return navigationManager;
     }
 }

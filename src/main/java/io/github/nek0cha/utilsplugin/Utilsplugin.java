@@ -37,6 +37,7 @@ public final class Utilsplugin extends JavaPlugin {
         scoreboardManager = new ScoreboardManager(this);
 
         // マネージャーの開始
+        autoBroadcastManager.start();
         tabListManager.start();
         scoreboardManager.start();
 

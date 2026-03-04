@@ -67,15 +67,6 @@ broadcast:
   format: "&6[お知らせ] &e{message}"
   # 権限: utilsplugin.broadcast
 
-# チャットクリア設定
-clearchat:
-  enabled: true
-  lines: 100
-  # クリア時のメッセージ
-  message: "&aチャットが {player} によってクリアされました"
-  # 権限: utilsplugin.clearchat
-  # バイパス権限（チャットクリアされない）: utilsplugin.clearchat.bypass
-
 # ソーシャルスパイ設定
 socialspy:
   enabled: true

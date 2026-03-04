@@ -27,6 +27,12 @@ public class ReloadCommand implements CommandExecutor {
         // タイムゾーンの再読み込み
         plugin.getPlaceholderManager().updateTimeZone();
 
+        // AFK チェッカーを再起動（設定変更を反映）
+        plugin.getAFKManager().startAFKChecker();
+
+        // 定期メッセージを再起動（設定変更を反映）
+        plugin.getAutoBroadcastManager().restart();
+
         String message = plugin.getConfigManager().getMessage("reload-success");
         sender.sendMessage(plugin.getChatManager().translateToComponent(message));
         return true;

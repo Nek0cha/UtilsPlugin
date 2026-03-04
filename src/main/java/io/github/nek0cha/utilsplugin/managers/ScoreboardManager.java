@@ -1,6 +1,7 @@
 package io.github.nek0cha.utilsplugin.managers;
 
 import io.github.nek0cha.utilsplugin.Utilsplugin;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -49,17 +50,8 @@ public class ScoreboardManager {
 
     public void createScoreboard(Player player) {
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-
-        String title = plugin.getConfig().getString("scoreboard.title", "&6&lサーバー情報");
-
-        Objective objective = scoreboard.registerNewObjective("sidebar", Criteria.DUMMY,
-            plugin.getChatManager().translateToComponent(title));
-        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-
-
         player.setScoreboard(scoreboard);
         playerScoreboards.put(player.getUniqueId(), scoreboard);
-
         updateScoreboard(player);
     }
 
@@ -70,21 +62,18 @@ public class ScoreboardManager {
             return;
         }
 
-        Objective objective = scoreboard.getObjective("sidebar");
-        if (objective == null) {
-            createScoreboard(player);
-            return;
-        }
+        // タイトルをHEXカラー込みで生成
+        String titleRaw = plugin.getConfig().getString("scoreboard.title", "&6&lサーバー情報");
+        titleRaw = plugin.getPlaceholderManager().replacePlaceholders(titleRaw, player);
+        Component titleComponent = plugin.getChatManager().translateToComponent(titleRaw);
 
-        // タイトルを毎回更新（設定変更後も反映されるように）
-        String title = plugin.getConfig().getString("scoreboard.title", "&6&lサーバー情報");
-        title = plugin.getPlaceholderManager().replacePlaceholders(title, player);
-        objective.displayName(plugin.getChatManager().translateToComponent(title));
-
-        // 既存のエントリをすべてクリア
-        for (String entry : scoreboard.getEntries()) {
-            scoreboard.resetScores(entry);
+        // Objectiveを毎回再作成してタイトル変更を確実に反映
+        Objective old = scoreboard.getObjective("sidebar");
+        if (old != null) {
+            old.unregister();
         }
+        Objective objective = scoreboard.registerNewObjective("sidebar", Criteria.DUMMY, titleComponent);
+        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         List<String> lines = plugin.getConfig().getStringList("scoreboard.lines");
         int maxLines = Math.min(lines.size(), 15);
@@ -93,19 +82,16 @@ public class ScoreboardManager {
             String line = lines.get(i);
             line = plugin.getPlaceholderManager().replacePlaceholders(line, player);
 
-            // Adventure ComponentとしてHEXカラーコードを含む行を変換
-            net.kyori.adventure.text.Component lineComponent;
+            Component lineComponent;
             if (line.trim().isEmpty()) {
-                // 空行は一意なスペース
-                lineComponent = net.kyori.adventure.text.Component.text(" ".repeat(i + 1));
+                // 空行は一意なスペース（インデックス分のスペース）
+                lineComponent = Component.text(" ".repeat(i + 1));
             } else {
                 lineComponent = plugin.getChatManager().translateToComponent(line);
             }
 
-            // エントリ名は行インデックスベースの一意な識別子
-            // 表示はcustomName(Component)でHEXカラーを含むComponentを使用
+            // エントリキーは一意な識別子
             String entryKey = "line_" + i;
-
             Score scoreEntry = objective.getScore(entryKey);
             scoreEntry.customName(lineComponent);
             scoreEntry.setScore(maxLines - i);

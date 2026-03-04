@@ -3,6 +3,7 @@ package io.github.nek0cha.utilsplugin.managers;
 import io.github.nek0cha.utilsplugin.Utilsplugin;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 
@@ -11,20 +12,34 @@ public class AFKManager {
     private final Utilsplugin plugin;
     private final Map<UUID, Long> lastActivity = new HashMap<>();
     private final Set<UUID> afkPlayers = new HashSet<>();
+    private BukkitTask checkerTask = null;
 
     public AFKManager(Utilsplugin plugin) {
         this.plugin = plugin;
         startAFKChecker();
     }
 
-    private void startAFKChecker() {
+    public void startAFKChecker() {
+        // 既存のタスクをキャンセル
+        if (checkerTask != null && !checkerTask.isCancelled()) {
+            checkerTask.cancel();
+            checkerTask = null;
+        }
+
         if (!plugin.getConfig().getBoolean("features.afk.enabled", true)) {
             return;
         }
 
-        new BukkitRunnable() {
+        checkerTask = new BukkitRunnable() {
             @Override
             public void run() {
+                // AFK機能が無効になっていたらタイマーを止める
+                if (!plugin.getConfig().getBoolean("features.afk.enabled", true)) {
+                    cancel();
+                    checkerTask = null;
+                    return;
+                }
+
                 long timeout = plugin.getConfig().getLong("features.afk.timeout", 300) * 1000;
                 long currentTime = System.currentTimeMillis();
 
@@ -70,16 +85,14 @@ public class AFKManager {
             String message = plugin.getConfig().getString("features.afk.message-afk",
                 "&e{player} は現在AFK（離席中）です");
             message = message.replace("{player}", player.getName());
-            String finalMessage = plugin.getChatManager().translateColorCodes(message);
-            plugin.getServer().broadcast(net.kyori.adventure.text.Component.text(finalMessage));
+            plugin.getServer().broadcast(plugin.getChatManager().translateToComponent(message));
 
         } else if (!afk && afkPlayers.contains(uuid)) {
             afkPlayers.remove(uuid);
             String message = plugin.getConfig().getString("features.afk.message-return",
                 "&e{player} がAFK状態から戻りました");
             message = message.replace("{player}", player.getName());
-            String finalMessage = plugin.getChatManager().translateColorCodes(message);
-            plugin.getServer().broadcast(net.kyori.adventure.text.Component.text(finalMessage));
+            plugin.getServer().broadcast(plugin.getChatManager().translateToComponent(message));
         }
     }
 

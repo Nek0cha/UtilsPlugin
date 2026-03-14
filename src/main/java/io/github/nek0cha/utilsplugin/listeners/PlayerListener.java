@@ -67,8 +67,7 @@ public class PlayerListener implements Listener {
                     net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(event.deathMessage())
                     : event.getPlayer().getName() + " が死亡しました";
                 format = format.replace("{message}", deathMessage);
-                format = plugin.getChatManager().translateColorCodes(format);
-                event.deathMessage(net.kyori.adventure.text.Component.text(format));
+                event.deathMessage(plugin.getChatManager().translateToComponent(format));
             }
         }
     }

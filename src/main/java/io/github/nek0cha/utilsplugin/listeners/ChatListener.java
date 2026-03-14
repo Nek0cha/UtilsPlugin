@@ -4,7 +4,6 @@ import io.github.nek0cha.utilsplugin.Utilsplugin;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -45,11 +44,8 @@ public class ChatListener implements Listener {
             String formattedMessage = plugin.getChatManager().formatChatMessage(player, message);
 
             if (formattedMessage != null) {
-                // URLClickManagerを使用してクリック可能なURLを処理
-                TextComponent clickableMessage = plugin.getURLClickManager().processMessage(formattedMessage);
-
-                // TextComponentからAdventure Componentに変換してブロードキャスト
-                Component adventureComponent = plugin.getChatManager().translateToComponent(clickableMessage.toLegacyText());
+                // Adventure APIでURLをクリック可能にしてブロードキャスト
+                Component adventureComponent = plugin.getChatManager().translateToComponent(formattedMessage);
                 plugin.getServer().broadcast(adventureComponent);
             }
         }

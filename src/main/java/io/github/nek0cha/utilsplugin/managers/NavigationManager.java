@@ -171,20 +171,8 @@ public class NavigationManager {
         }
     }
 
-    // 修正: サーバー移動機能にアドレスとポートを指定するオプションを追加
+    // アドレスとポートが指定されていてもサーバー名で接続（BungeeCordはサーバー名のみ使用）
     public void connectToServer(Player player, String serverName, String address, int port) {
-        try {
-            ByteArrayOutputStream b = new ByteArrayOutputStream();
-            DataOutputStream out = new DataOutputStream(b);
-            out.writeUTF("ConnectOther");
-            out.writeUTF(player.getName());
-            out.writeUTF(serverName);
-            out.writeUTF(address);
-            out.writeInt(port);
-            player.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
-        } catch (Exception e) {
-            player.sendMessage(ChatColor.RED + "サーバーへの接続に失敗しました");
-            e.printStackTrace();
-        }
+        connectToServer(player, serverName);
     }
 }

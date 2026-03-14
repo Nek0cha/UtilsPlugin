@@ -2,21 +2,22 @@ package io.github.nek0cha.utilsplugin.managers;
 
 import io.github.nek0cha.utilsplugin.Utilsplugin;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class PlaceholderManager {
 
     private final Utilsplugin plugin;
-    private SimpleDateFormat timeFormat;
-    private SimpleDateFormat dateFormat;
-    private SimpleDateFormat hourFormat;
-    private SimpleDateFormat minuteFormat;
-    private SimpleDateFormat secondFormat;
-    private SimpleDateFormat yearFormat;
-    private SimpleDateFormat monthFormat;
-    private SimpleDateFormat dayFormat;
+    // DateTimeFormatter はイミュータブルでスレッドセーフ
+    private DateTimeFormatter timeFormat;
+    private DateTimeFormatter dateFormat;
+    private DateTimeFormatter hourFormat;
+    private DateTimeFormatter minuteFormat;
+    private DateTimeFormatter secondFormat;
+    private DateTimeFormatter yearFormat;
+    private DateTimeFormatter monthFormat;
+    private DateTimeFormatter dayFormat;
 
     public PlaceholderManager(Utilsplugin plugin) {
         this.plugin = plugin;
@@ -25,45 +26,36 @@ public class PlaceholderManager {
 
     public void updateTimeZone() {
         String timezone = plugin.getConfig().getString("timezone", "UTC");
-        TimeZone tz = TimeZone.getTimeZone(timezone);
+        ZoneId zoneId;
+        try {
+            zoneId = ZoneId.of(timezone);
+        } catch (Exception e) {
+            plugin.getLogger().warning("無効なタイムゾーン設定: " + timezone + " - UTCを使用します");
+            zoneId = ZoneId.of("UTC");
+        }
 
-        timeFormat = new SimpleDateFormat("HH:mm:ss");
-        timeFormat.setTimeZone(tz);
-
-        dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-        dateFormat.setTimeZone(tz);
-
-        hourFormat = new SimpleDateFormat("HH");
-        hourFormat.setTimeZone(tz);
-
-        minuteFormat = new SimpleDateFormat("mm");
-        minuteFormat.setTimeZone(tz);
-
-        secondFormat = new SimpleDateFormat("ss");
-        secondFormat.setTimeZone(tz);
-
-        yearFormat = new SimpleDateFormat("yyyy");
-        yearFormat.setTimeZone(tz);
-
-        monthFormat = new SimpleDateFormat("MM");
-        monthFormat.setTimeZone(tz);
-
-        dayFormat = new SimpleDateFormat("dd");
-        dayFormat.setTimeZone(tz);
+        timeFormat   = DateTimeFormatter.ofPattern("HH:mm:ss").withZone(zoneId);
+        dateFormat   = DateTimeFormatter.ofPattern("yyyy/MM/dd").withZone(zoneId);
+        hourFormat   = DateTimeFormatter.ofPattern("HH").withZone(zoneId);
+        minuteFormat = DateTimeFormatter.ofPattern("mm").withZone(zoneId);
+        secondFormat = DateTimeFormatter.ofPattern("ss").withZone(zoneId);
+        yearFormat   = DateTimeFormatter.ofPattern("yyyy").withZone(zoneId);
+        monthFormat  = DateTimeFormatter.ofPattern("MM").withZone(zoneId);
+        dayFormat    = DateTimeFormatter.ofPattern("dd").withZone(zoneId);
     }
 
     public String replacePlaceholders(String text, org.bukkit.entity.Player player) {
-        Date now = new Date();
+        ZonedDateTime now = ZonedDateTime.now();
 
         // 時間関連
-        text = text.replace("{time}", timeFormat.format(now));
-        text = text.replace("{date}", dateFormat.format(now));
-        text = text.replace("{hour}", hourFormat.format(now));
+        text = text.replace("{time}",   timeFormat.format(now));
+        text = text.replace("{date}",   dateFormat.format(now));
+        text = text.replace("{hour}",   hourFormat.format(now));
         text = text.replace("{minute}", minuteFormat.format(now));
         text = text.replace("{second}", secondFormat.format(now));
-        text = text.replace("{year}", yearFormat.format(now));
-        text = text.replace("{month}", monthFormat.format(now));
-        text = text.replace("{day}", dayFormat.format(now));
+        text = text.replace("{year}",   yearFormat.format(now));
+        text = text.replace("{month}",  monthFormat.format(now));
+        text = text.replace("{day}",    dayFormat.format(now));
 
         if (player != null) {
             // プレイヤー情報
@@ -96,26 +88,11 @@ public class PlaceholderManager {
     }
 
     private double getTPS() {
-        try {
-            Object server = plugin.getServer().getClass().getMethod("getServer").invoke(plugin.getServer());
-            Object tickTimes = server.getClass().getField("recentTps").get(server);
-            return ((double[]) tickTimes)[0];
-        } catch (Exception e) {
-            return 20.0;
-        }
+        double[] tpsArray = plugin.getServer().getTPS();
+        return tpsArray.length > 0 ? tpsArray[0] : 20.0;
     }
 
     private double getMSPT() {
-        try {
-            Object server = plugin.getServer().getClass().getMethod("getServer").invoke(plugin.getServer());
-            long[] tickTimes = (long[]) server.getClass().getMethod("getTickTimes").invoke(server);
-            long sum = 0;
-            for (long time : tickTimes) {
-                sum += time;
-            }
-            return (sum / (double) tickTimes.length) / 1000000.0;
-        } catch (Exception e) {
-            return 0.0;
-        }
+        return plugin.getServer().getAverageTickTime();
     }
 }

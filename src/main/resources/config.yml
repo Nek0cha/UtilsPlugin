@@ -98,7 +98,7 @@ features:
 
   # AFKシステム
   afk:
-    enabled: true
+    enabled: false
     timeout: 300 # 5分間操作がないとAFK
     message-afk: "&d{player} は現在AFK（離席中）です"
     message-return: "&d{player} がAFK状態から戻りました"
@@ -106,7 +106,7 @@ features:
 
 # 定期メッセージ
 auto-broadcast:
-  enabled: true
+  enabled: false
   # メッセージの間隔（分）
   interval: 5
   # プレフィックス
